@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Stashy.Api.Infrastructure.Exceptions;
 
 namespace Stashy.Api.Infrastructure.Hosting
 {
@@ -22,15 +24,25 @@ namespace Stashy.Api.Infrastructure.Hosting
         {
             return Task.Factory.StartNew(async () =>
             {
-                // delay startup
-                //await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
-
-                using (IServiceScope scope = _serviceScopeFactory.CreateScope())
+                try
                 {
-                    ICoinManager coinManager = scope.ServiceProvider.GetService<ICoinManager>();
+                    // delay startup
+                    await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
 
-                    // run coin manager
-                    await coinManager.RunAsync(stoppingToken);
+                    using (IServiceScope scope = _serviceScopeFactory.CreateScope())
+                    {
+                        ICoinManager coinManager = scope.ServiceProvider.GetService<ICoinManager>();
+
+                        // run coin manager
+                        await coinManager.RunAsync(stoppingToken);
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (!(e is LoggedException))
+                    {
+                        _logger.LogError(e, "StashyBackgroundService -> ExecuteAsync");
+                    }
                 }
             }, stoppingToken);
         }

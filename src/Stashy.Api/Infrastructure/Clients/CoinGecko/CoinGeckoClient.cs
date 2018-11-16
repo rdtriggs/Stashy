@@ -31,7 +31,18 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
             CancellationToken cancellationToken = default)
         {
             List<Coin> coins = new List<Coin>();
-            IReadOnlyCollection<CoinListItem> list = await GetCoinsListAsync(cancellationToken).ConfigureAwait(false);
+            IReadOnlyCollection<CoinListItem> list;
+
+            try
+            {
+                list = await GetCoinsListAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "CoinGeckoClient -> GetCoinsAsync");
+
+                throw new LoggedException(e);
+            }
 
             if (!list.Any())
             {
@@ -94,6 +105,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
                 IReadOnlyCollection<CoinItem> results = await _flurlClient.Request("api/v3/coins")
                     .SetQueryParams(new {per_page = perPage, page})
                     .GetJsonAsync<IReadOnlyCollection<CoinItem>>(cancellationToken);
+                _logger.LogDebug("GetCoinsAsync found {Count} coins", results.Count);
 
                 return results;
             }
@@ -112,6 +124,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
             {
                 IReadOnlyCollection<CoinListItem> results = await _flurlClient.Request("api/v3/coins/list")
                     .GetJsonAsync<IReadOnlyCollection<CoinListItem>>(cancellationToken);
+                _logger.LogDebug("GetCoinsListAsync found {Count} coins", results.Count);
 
                 return results;
             }
