@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Stashy.Api.Infrastructure.Exceptions;
 using Stashy.Api.Infrastructure.Services;
 
 namespace Stashy.Api.Infrastructure
@@ -23,26 +22,32 @@ namespace Stashy.Api.Infrastructure
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (_lastUpdate.AddMinutes(5) < DateTime.Now)
+                try
                 {
-                    _logger.LogDebug("CoinManager is polling");
-
-                    try
-                    {
-                        _lastUpdate = DateTime.Now;
-                        await _coinService.UpdateAsync(cancellationToken);
-                    }
-                    catch (Exception e)
-                    {
-                        if (!(e is LoggedException))
-                        {
-                            _logger.LogError(e, "CoinManager -> RunAsync");
-                        }
-                    }
+                    await DoWorkAsync(cancellationToken);
                 }
+                catch (Exception e)
+                {
+                    _logger.LogCritical(e, "{Class} -> {Method} failed, cooling off for 2 minutes", nameof(CoinManager),
+                        nameof(RunAsync));
 
-                await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                    await Task.Delay(TimeSpan.FromMinutes(2), cancellationToken);
+                }
             }
+        }
+
+        private async Task DoWorkAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogDebug("{Class} is polling", nameof(CoinManager));
+
+            if (_lastUpdate.AddMinutes(5) < DateTime.Now)
+            {
+                _logger.LogDebug("Updating coins via the coin service");
+                _lastUpdate = DateTime.Now;
+                await _coinService.UpdateAsync(cancellationToken);
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
         }
     }
 }
