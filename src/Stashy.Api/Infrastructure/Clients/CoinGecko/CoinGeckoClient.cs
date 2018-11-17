@@ -90,7 +90,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
                 IReadOnlyCollection<CoinItem> results = await _flurlClient.Request("api/v3/coins")
                     .SetQueryParams(new {per_page = perPage, page})
                     .GetJsonAsync<IReadOnlyCollection<CoinItem>>(cancellationToken);
-                _logger.LogDebug("GetCoinsAsync found {Count} coins on page {Page}", results.Count, page);
+                _logger.LogDebug("Found {Count} coins on page {Page}", results.Count, page);
 
                 return results;
             }
@@ -109,7 +109,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
             {
                 IReadOnlyCollection<CoinListItem> results = await _flurlClient.Request("api/v3/coins/list")
                     .GetJsonAsync<IReadOnlyCollection<CoinListItem>>(cancellationToken);
-                _logger.LogDebug("GetCoinsListAsync found {Count} coins", results.Count);
+                _logger.LogDebug("Found {Count} total coins", results.Count);
 
                 return results;
             }
