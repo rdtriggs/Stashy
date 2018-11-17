@@ -29,8 +29,8 @@ namespace Stashy.Api.Infrastructure
 
                     try
                     {
-                        await _coinService.UpdateAsync(cancellationToken);
                         _lastUpdate = DateTime.Now;
+                        await _coinService.UpdateAsync(cancellationToken);
                     }
                     catch (Exception e)
                     {
