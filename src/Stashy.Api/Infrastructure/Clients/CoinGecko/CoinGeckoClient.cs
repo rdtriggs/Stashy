@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -30,19 +30,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
         public override async Task<IReadOnlyCollection<Coin>> GetCoinsAsync(
             CancellationToken cancellationToken = default)
         {
-            List<Coin> coins = new List<Coin>();
-            IReadOnlyCollection<CoinListItem> list;
-
-            try
-            {
-                list = await GetCoinsListAsync(cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "CoinGeckoClient -> GetCoinsAsync");
-
-                throw new LoggedException(e);
-            }
+            IReadOnlyCollection<CoinListItem> list = await GetCoinsListAsync(cancellationToken).ConfigureAwait(false);
 
             if (!list.Any())
             {
@@ -51,48 +39,45 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
 
             const int perPage = 100;
             int totalPages = (int) Math.Ceiling(list.Count / (decimal) perPage);
-            List<int> pages = Enumerable.Range(1, totalPages).ToList();
-            IEnumerable<Task<IReadOnlyCollection<CoinItem>>> allTasks =
-                pages.Select(page => GetCoinsAsync(page, perPage, cancellationToken));
+            IReadOnlyCollection<Coin> coins = await ProcessPagesAsync(perPage, totalPages, cancellationToken);
 
-            int batch = 0;
-            const int perBatch = 5;
-            while (batch < totalPages)
+            return coins;
+        }
+
+        private async Task<IReadOnlyCollection<Coin>> ProcessPagesAsync(int perPage, int totalPages,
+            CancellationToken cancellationToken, int maxDegreeOfParallelism = 10)
+        {
+            SemaphoreSlim semaphore = new SemaphoreSlim(maxDegreeOfParallelism);
+            List<Task<IReadOnlyCollection<CoinItem>>> tasks = new List<Task<IReadOnlyCollection<CoinItem>>>();
+
+            for (int i = 0; i < totalPages; i++)
             {
-                Task timer = Task.Delay(TimeSpan.FromSeconds(1.2), cancellationToken);
-                List<Task<IReadOnlyCollection<CoinItem>>> tasks = allTasks.Skip(batch).Take(perBatch).ToList();
-                IEnumerable<Task> tasksAndTimer = tasks.Concat(new[] {timer});
-
-                try
+                int item = i;
+                Task<IReadOnlyCollection<CoinItem>> task = Task.Run(async () =>
                 {
-                    _logger.LogDebug("Running batch of requests");
+                    await semaphore.WaitAsync(cancellationToken);
 
-                    // run tasks
-                    await Task.WhenAll(tasksAndTimer).ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    if (!(e is LoggedException))
+                    try
                     {
-                        _logger.LogError(e, "CoinGeckoClient -> GetCoinsAsync");
+                        await Task.Delay(TimeSpan.FromSeconds(item == 5 ? 1 : 0), cancellationToken);
 
-                        throw;
+                        int page = item + 1;
+                        IReadOnlyCollection<CoinItem> results = await GetCoinsAsync(page, perPage, cancellationToken);
+
+                        return results;
                     }
-                }
-
-                foreach (Task<IReadOnlyCollection<CoinItem>> task in tasks)
-                {
-                    if (!task.IsCompletedSuccessfully)
+                    finally
                     {
-                        continue;
+                        semaphore.Release();
                     }
-
-                    coins.AddRange(_mapper.Map<IReadOnlyCollection<Coin>>(task.Result));
-                }
-
-                batch += perBatch;
+                }, cancellationToken);
+                tasks.Add(task);
             }
 
+            await Task.WhenAll(tasks);
+            IReadOnlyCollection<Coin> coins =
+                _mapper.Map<IReadOnlyCollection<Coin>>(tasks.Where(x => x.IsCompletedSuccessfully)
+                    .SelectMany(t => t.Result));
 
             return coins;
         }
@@ -109,7 +94,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
 
                 return results;
             }
-            catch (Exception e)
+            catch (FlurlHttpException e)
             {
                 _logger.LogError(e, "{Class} -> {Method} (page: {Page}, perPage: {PerPage})", nameof(CoinGeckoClient),
                     nameof(GetCoinsAsync), page, perPage);
@@ -128,7 +113,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
 
                 return results;
             }
-            catch (Exception e)
+            catch (FlurlHttpException e)
             {
                 _logger.LogError(e, "{Class} -> {Method}", nameof(CoinGeckoClient), nameof(GetCoinsListAsync));
 
