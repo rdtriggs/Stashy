@@ -16,7 +16,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
         {
             double result = dictionary.FirstOrDefault(item => item.Key == "usd").Value ?? 0;
 
-            return Math.Round((decimal) result, 2, MidpointRounding.ToEven);
+            return Math.Round((decimal) result, 4, MidpointRounding.ToEven);
         }
     }
 
