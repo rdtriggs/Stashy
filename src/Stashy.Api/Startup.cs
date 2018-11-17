@@ -32,7 +32,8 @@ namespace Stashy.Api
             services.AddCors(options =>
             {
                 options.AddPolicy("DefaultCorsPolicy",
-                    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+                    builder => builder.WithOrigins(Configuration.GetSection("Cors:Origins").Get<string[]>())
+                        .AllowAnyMethod().AllowAnyHeader());
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(jo =>
             {
