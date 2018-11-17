@@ -32,7 +32,7 @@ namespace Stashy.Api
             }
             catch (Exception e)
             {
-                Log.Fatal(e, $"{nameof(Program)} -> {nameof(Main)} -> Host terminated unexpectedly");
+                Log.Fatal(e, "{Class} -> {Method} -> Host terminated unexpectedly", nameof(Program), nameof(Main));
 
                 return 1;
             }

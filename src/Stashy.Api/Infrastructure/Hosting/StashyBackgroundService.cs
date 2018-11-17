@@ -41,7 +41,8 @@ namespace Stashy.Api.Infrastructure.Hosting
                 {
                     if (!(e is LoggedException))
                     {
-                        _logger.LogError(e, "StashyBackgroundService -> ExecuteAsync");
+                        _logger.LogError(e, "{Class} -> {Method}", nameof(StashyBackgroundService),
+                            nameof(ExecuteAsync));
                     }
                 }
             }, stoppingToken);

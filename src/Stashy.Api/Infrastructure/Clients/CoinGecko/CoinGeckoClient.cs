@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -105,14 +105,14 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
                 IReadOnlyCollection<CoinItem> results = await _flurlClient.Request("api/v3/coins")
                     .SetQueryParams(new {per_page = perPage, page})
                     .GetJsonAsync<IReadOnlyCollection<CoinItem>>(cancellationToken);
-                _logger.LogDebug("GetCoinsAsync found {Count} coins", results.Count);
+                _logger.LogDebug("GetCoinsAsync found {Count} coins on page {Page}", results.Count, page);
 
                 return results;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "CoinGeckoClient -> GetCoinsAsync (page: {Page}, perPage: {perPage})", page,
-                    perPage);
+                _logger.LogError(e, "{Class} -> {Method} (page: {Page}, perPage: {PerPage})", nameof(CoinGeckoClient),
+                    nameof(GetCoinsAsync), page, perPage);
 
                 throw new LoggedException(e);
             }
@@ -130,7 +130,7 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "CoinGeckoClient -> GetCoinsListAsync");
+                _logger.LogError(e, "{Class} -> {Method}", nameof(CoinGeckoClient), nameof(GetCoinsListAsync));
 
                 throw new LoggedException(e);
             }
