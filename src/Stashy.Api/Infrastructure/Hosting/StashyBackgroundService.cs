@@ -37,13 +37,9 @@ namespace Stashy.Api.Infrastructure.Hosting
                         await coinManager.RunAsync(stoppingToken);
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (!(e is LoggedException))
                 {
-                    if (!(e is LoggedException))
-                    {
-                        _logger.LogError(e, "{Class} -> {Method}", nameof(StashyBackgroundService),
-                            nameof(ExecuteAsync));
-                    }
+                    _logger.LogError(e, "{Class} -> {Method}", nameof(StashyBackgroundService), nameof(ExecuteAsync));
                 }
             }, stoppingToken);
         }
