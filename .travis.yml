@@ -1,8 +1,8 @@
 language: csharp
 mono: none
 dist: trusty
-dotnet: "2.1.403"
-solution: Magnetite.sln
+dotnet: "2.1.500"
+solution: Stashy.LightApi.sln
 
 install: 
   - "dotnet restore"
