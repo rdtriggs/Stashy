@@ -9,11 +9,11 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
         public CoinGeckoProfile()
         {
             CreateMap<CoinItem, Coin>()
-                .ForMember(dest => dest.Symbol, opt => opt.ResolveUsing(src => src.Symbol.ToUpperInvariant()))
-                .ForMember(dest => dest.MarketCap, opt => opt.ResolveUsing<MarketCapValueResolver>())
-                .ForMember(dest => dest.TotalVolume, opt => opt.ResolveUsing<TotalVolumeValueResolver>())
-                .ForMember(dest => dest.CurrentPrice, opt => opt.ResolveUsing<CurrentPriceValueResolver>())
-                .ForMember(dest => dest.PercentChange, opt => opt.ResolveUsing<PercentChangeValueResolver>());
+                .ForMember(dest => dest.Symbol, opt => opt.MapFrom(src => src.Symbol.ToUpperInvariant()))
+                .ForMember(dest => dest.MarketCap, opt => opt.MapFrom<MarketCapValueResolver>())
+                .ForMember(dest => dest.TotalVolume, opt => opt.MapFrom<TotalVolumeValueResolver>())
+                .ForMember(dest => dest.CurrentPrice, opt => opt.MapFrom<CurrentPriceValueResolver>())
+                .ForMember(dest => dest.PercentChange, opt => opt.MapFrom<PercentChangeValueResolver>());
         }
     }
 }
