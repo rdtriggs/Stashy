@@ -2,7 +2,7 @@ language: csharp
 mono: none
 dist: trusty
 dotnet: "2.1.500"
-solution: Stashy.LightApi.sln
+solution: Stashy.sln
 
 install: 
   - "dotnet restore"
