@@ -1,6 +1,6 @@
 # Stashy API
 
-[![Build Status](https://travis-ci.org/majordutch/Stashy.LightApi.svg?branch=master)](https://travis-ci.org/majordutch/Stashy.LightApi)
+[![Build Status](https://travis-ci.org/Nodestry/Stashy.svg?branch=master)](https://travis-ci.org/Nodestry/Stashy)
 
 https://stashy.net
 
