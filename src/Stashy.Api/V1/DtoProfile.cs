@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Stashy.Api.Infrastructure.Dtos;
 using Stashy.Api.Infrastructure.Models;
+using Stashy.Api.V1.Dtos;
 
-namespace Stashy.Api.Infrastructure.Profiles
+namespace Stashy.Api.V1
 {
     public class DtoProfile : Profile
     {

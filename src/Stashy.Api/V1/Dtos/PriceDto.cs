@@ -1,4 +1,4 @@
-﻿namespace Stashy.Api.Infrastructure.Dtos
+﻿namespace Stashy.Api.V1.Dtos
 {
     public class PriceDto
     {

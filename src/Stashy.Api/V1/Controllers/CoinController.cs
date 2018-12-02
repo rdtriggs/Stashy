@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Stashy.Api.Infrastructure.Dtos;
 using Stashy.Api.Infrastructure.Services;
+using Stashy.Api.V1.Dtos;
 
-namespace Stashy.Api.Controllers
+namespace Stashy.Api.V1.Controllers
 {
-    [Route("v2/[controller]")]
+    [ApiVersion("1.0")]
+    [Produces("application/json")]
+    [Route("v{version:apiVersion}/[controller]")]
     [ApiController]
     public class CoinController : ControllerBase
     {
