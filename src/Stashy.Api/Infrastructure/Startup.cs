@@ -59,7 +59,7 @@ namespace Stashy.Api.Infrastructure
                 .SingleInstance();
             builder.RegisterType<CoinService>()
                 .As<ICoinService>()
-                .InstancePerLifetimeScope();
+                .SingleInstance();
             builder.RegisterType<CoinGeckoClient>()
                 .As<IClient>()
                 .InstancePerLifetimeScope();
