@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Stashy.Api.Infrastructure.Services;
-using Stashy.Api.V1.Dtos;
+using Stashy.Api.V2.Dtos;
 
-namespace Stashy.Api.V1.Controllers
+namespace Stashy.Api.V2.Controllers
 {
     [ApiVersion("2.0")]
     [Produces("application/json")]

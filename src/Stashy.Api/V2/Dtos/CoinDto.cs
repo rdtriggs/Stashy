@@ -1,4 +1,4 @@
-﻿namespace Stashy.Api.V1.Dtos
+﻿namespace Stashy.Api.V2.Dtos
 {
     public class CoinDto
     {
