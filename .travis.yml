@@ -4,6 +4,10 @@ dist: trusty
 dotnet: "2.1.500"
 solution: Stashy.sln
 
+sudo: required
+services:
+  - docker
+
 install: 
   - "dotnet restore"
 script: 
