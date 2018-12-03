@@ -14,7 +14,8 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
 
         protected decimal Resolve(Dictionary<string, double?> dictionary)
         {
-            double result = dictionary.FirstOrDefault(item => item.Key == "usd").Value ?? 0;
+            double result = dictionary.FirstOrDefault(item => item.Key == "usd")
+                                .Value ?? 0;
 
             return Math.Round((decimal) result, 4, MidpointRounding.ToEven);
         }

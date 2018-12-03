@@ -13,14 +13,18 @@ namespace Stashy.Api
     public class Program
     {
         public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", false, true)
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", false, true)
             .AddJsonFile(
                 $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
-                true).AddEnvironmentVariables().Build();
+                true)
+            .AddEnvironmentVariables()
+            .Build();
 
         public static async Task<int> Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration).CreateLogger();
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
+                .CreateLogger();
 
             try
             {
@@ -45,8 +49,12 @@ namespace Stashy.Api
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            return WebHost.CreateDefaultBuilder(args).ConfigureServices(services => services.AddAutofac())
-                .UseConfiguration(Configuration).UseStartup<Startup>().UseSerilog().Build();
+            return WebHost.CreateDefaultBuilder(args)
+                .ConfigureServices(services => services.AddAutofac())
+                .UseConfiguration(Configuration)
+                .UseStartup<Startup>()
+                .UseSerilog()
+                .Build();
         }
     }
 }

@@ -24,7 +24,8 @@ namespace Stashy.Api.Infrastructure.Services
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
         {
-            IReadOnlyCollection<Coin> coins = await _client.GetCoinsAsync(cancellationToken).ConfigureAwait(false);
+            IReadOnlyCollection<Coin> coins = await _client.GetCoinsAsync(cancellationToken)
+                .ConfigureAwait(false);
             foreach (Coin coin in coins)
             {
                 _coins.AddOrUpdate(coin.Id, coin, (key, existingVal) => coin);
@@ -33,7 +34,8 @@ namespace Stashy.Api.Infrastructure.Services
 
         public Task<IReadOnlyCollection<Coin>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            IReadOnlyCollection<Coin> result = _coins.Values.OrderBy(coin => coin.Id).ToArray();
+            IReadOnlyCollection<Coin> result = _coins.Values.OrderBy(coin => coin.Id)
+                .ToArray();
 
             return Task.FromResult(result);
         }

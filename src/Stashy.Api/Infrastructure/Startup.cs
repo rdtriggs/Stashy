@@ -69,7 +69,8 @@ namespace Stashy.Api.Infrastructure
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMapper autoMapper, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMapper autoMapper,
+            IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {

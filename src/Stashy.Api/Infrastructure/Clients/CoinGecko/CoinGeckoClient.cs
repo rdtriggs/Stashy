@@ -30,7 +30,8 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
         public override async Task<IReadOnlyCollection<Coin>> GetCoinsAsync(
             CancellationToken cancellationToken = default)
         {
-            IReadOnlyCollection<CoinListItem> list = await GetCoinsListAsync(cancellationToken).ConfigureAwait(false);
+            IReadOnlyCollection<CoinListItem> list = await GetCoinsListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
             if (!list.Any())
             {
@@ -75,9 +76,9 @@ namespace Stashy.Api.Infrastructure.Clients.CoinGecko
             }
 
             await Task.WhenAll(tasks);
-            IReadOnlyCollection<Coin> coins =
-                _mapper.Map<IReadOnlyCollection<Coin>>(tasks.Where(x => x.IsCompletedSuccessfully)
-                    .SelectMany(t => t.Result));
+            IReadOnlyCollection<Coin> coins = _mapper.Map<IReadOnlyCollection<Coin>>(tasks
+                .Where(x => x.IsCompletedSuccessfully)
+                .SelectMany(t => t.Result));
 
             return coins;
         }

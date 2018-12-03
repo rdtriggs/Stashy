@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Stashy.Api.Infrastructure;
@@ -17,7 +16,9 @@ namespace Stashy.Extensions
             get
             {
                 string basePath = AppContext.BaseDirectory;
-                string fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
+                string fileName = typeof(Startup).GetTypeInfo()
+                                      .Assembly.GetName()
+                                      .Name + ".xml";
 
                 return Path.Combine(basePath, fileName);
             }
